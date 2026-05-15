@@ -18,7 +18,7 @@ def main():
 def preprocess():
     program = []
     with open("program.t") as f:
-        ln = -1
+        ln = 0
         for ins in f:
             ln += 1
             ins = ins.strip()
