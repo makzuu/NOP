@@ -92,6 +92,13 @@ def populate_stack(filename):
     except FileNotFoundError:
         sys.exit(f"input file {filename} not found")
 
+# mov src, dst
+# src: (IN | ACC | N)
+# dst: (ACC | OUT)
+
+# mov IN, ACC
+# mov ACC, OUT
+# mov N, (OUT | ACC)
 def mov(src, dst, ln):
     if src == "IN":
         if dst == "ACC":
@@ -103,13 +110,25 @@ def mov(src, dst, ln):
             print(state.acc)
         else:
             sys.exit(f"L: {ln} MOV: invalid dst {dst}")
+    elif src.isdecimal():
+        if dst == "ACC":
+            state.acc = int(src)
+        elif dst == "OUT":
+            print(src)
+        else:
+            sys.exit(f"L: {ln} MOV: invalid dst {dst}")
     else:
         sys.exit(f"L: {ln} MOV: invalid src {src}")
 
-
+# add src
+# src: (ACC | N | IN)
 def add(src, ln):
     if src == "ACC":
         state.acc += state.acc
+    elif src == "IN":
+        state.acc += stack.pop()
+    elif src.isdecimal():
+        state.acc += int(src)
     else:
         sys.exit(f"L: {ln} ADD: invalid src {src}")
 
