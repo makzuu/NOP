@@ -1,175 +1,117 @@
-Interprete para un lenguaje de programacion, por ahora sin nomnbre, inspirado
-en el lenguaje de programacion usado en el juego TIS-100.
+## Intructions
 
-## System Architecture
+### LABELS
 
-Solo existira un "nodo" de ejecucion, sin limite de lineas de codigo. A diferencia
-del juego, al llegar a la ultima linea no se volvera a ejecutar la primera en
-un loop infinito.
-
-Los registers solo almacenan integers entre -999 y 999.
-
-### ACC
-
-Este register es usando como destino y fuente de operaciones como add, sub, jez,
-etc.
-
-### BAK
-
-Este register se usa como el almacenamiento temporal de ACC y es accesible
-solamente a traves de las instrucciones SAV y SWP.
-
-## Instruction Set
-
-### Comentarios
-
-Todas las lineas que empiecen con el simbolo (#) son ignoradas.
-
-### Labels
-
-Labels son usadas como destino por instrucciones como JMP. Al ejecutar (JMP START),
-la ejecucion se reanudara en la siguiente linea despues de el label START
-
-Ejemplo:
-
-```
-LOOP:
-JMP LOOP
-```
-
-Esto crearia un loop infinito.
+syntax: <LABEL>:
 
 ### MOV
 
-Syntax: `MOV <SRC>, <DST>`
-
-Donde `<SRC>` es siempre un *INTEGER* y `<DST>` es siempre *ACC*.
-
-El valor `<SRC>` es leido y escrito a `<DST>`.
+syntax: `MOV <SRC>, <DST>`
 
 ### SWP
 
-Los valores de *ACC* y *BAK* son intercambiados.
+syntax: `SWP`
 
 ### SAV
 
-El valor de *ACC* es copiado a *BAK*
+syntax: `SAV`
 
 ### ADD
 
-Syntax: `ADD <SRC>`
-
-Donde `<SRC>` es un *Integer* o *ACC*.
-
-Se suma el valor en *SRC* a *ACC* y el resultado se guarda en *ACC*.
+syntax: `ADD <SRC>`
 
 ### SUB
 
-Syntax: `SUB <SRC>`
-
-Donde `<SRC>` es un *Integer* o "ACC".
-
-Se resta el valor en *SRC* a *ACC* y el resultado se guarda en *ACC*.
+syntax: `SUB <SRC>`
 
 ### NEG
 
-El valor en *ACC* cambia de signo. No tiene efecto en el zero.
+syntax: `NEG`
 
 ### JMP
 
-Syntax: `JMP <LABEL>`
-
-Reanuda la ejecucion en la instruccion siguiente a `<LABEL>`.
+syntax: `JMP <LABEL>`
 
 ### JEZ
 
-Syntax: `JEZ <LABEL>`
-
-Salto condicional. Si el valor en *ACC* es igual a cero, resume la ejecucion
-en la instruccion siguiente a `<LABEL>`.
+syntax: `JEZ <LABEL>`
 
 ### JNZ
 
-Syntax: `JNZ <LABEL>`
-
-Salto condicional. Si el valor en *ACC* es diferente de cero, resume la ejecucion
-en la instruccion siguiente a `<LABEL>`.
+syntax: `JNZ <LABEL>`
 
 ### JGZ
 
-Syntax: `JGZ <LABEL>`
-
-Salto condicional. Si el valor en *ACC* es mayor a cero, resume ejecucion en la
-instruccion siguiente a `<LABEL>`.
+syntax: `JGZ <LABEL>`
 
 ### JLZ
 
-Syntax: `JLZ <LABEL>`
-
-Salto condicional. Si el valor en *ACC* es menor a cero, resume ejecucion en la
-instruccion siguiente a `<LABEL>`.
+syntax: `JLZ <LABEL>`
 
 ### JRO
 
-...
+syntax: `JRO <SRC>`
 
-### PRT
+## Tokens
 
-Syntax: `PRT <SRC>`
+```python
+class TokenType(Enum):
+    EOF     = -1
+    NL      = 0
+    COMMA   = 1
+    COLON   = 2
 
-`<SRC>` puede ser una *STRING* (entre comillas), *ACC* o un *INTEGER*.
+    # Instructions
+    MOV     = 101
+    SWP     = 102
+    SAV     = 103
+    ADD     = 104
+    SUB     = 105
+    NEG     = 106
+    JMP     = 107
+    JEZ     = 108
+    JNZ     = 109
+    JGZ     = 110
+    JLZ     = 111
+    JRO     = 112
+    PRINT   = 113
 
-Escribe la `<SRC>` en la terminal.
+    IDENT   = 201
+    STRING  = 202
+    ACC     = 203
+    IN      = 204
+    OUT     = 205
+    STACK   = 206
+    SCREEN  = 207
+```
 
-### PSH
+## Grammar
 
-Syntax: `PSH <SRC>`
+- `{}`: zero or more.
+- `[]`: zero or one.
+- `+`: one or more of whatever is to the left.
+- `()`: grouping.
+- `|`: OR.
 
-Donde `<SRC>` puede ser un *INTEGER* o *ACC*.
-
-El valor de `<SRC>` es leido y puesto en la cima de la stack.
-
-### POP
-
-El valor en la cima del stack es consumido y escrito en *ACC*.
-
-### DRW
-
-...
-
-### CLR
-
-...
-
-### WT
-
-...
-
-### CLL
-
-...
-
-### RTN 
-
-...
-
-### IN
-
-...
-
-## Ejemplos
-
-Output numbers from 1 to 10.
 
 ```
-MOV 1, ACC
-LOOP:
-SAV
-SUB 11
-JEZ DONE
-SWP
-PTR ACC
-ADD 1
-JMP LOOP
-DONE:
+program ::= {statement}
+statement ::= ident ":" nl
+    | "MOV" src "," dst nl
+    | "SWP" nl
+    | "SAV" nl
+    | "ADD" src "," dst nl
+    | "SUB" src "," dst nl
+    | "NEG" 
+    | "JMP" ident nl
+    | "JEZ" ident nl
+    | "JNZ" ident nl
+    | "JGZ" ident nl
+    | "JLZ" ident nl
+    | "JRO" src
+    | "PRINT" readable | string
+src ::= number | readable
+dst ::= writable
+readable ::= "ACC" | "IN" | "STACK"
+writable ::= "ACC" | "OUT" | "STACK" | "SCREEN"
 ```
