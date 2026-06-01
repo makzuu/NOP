@@ -33,9 +33,10 @@ class TokenType(Enum):
 
 
 class Token:
-    def __init__(self, token_text, token_type):
+    def __init__(self, token_text, token_type, line):
         self.text = token_text
         self.type = token_type
+        self.line = line
 
     @staticmethod
     def is_keyword(text):
@@ -51,6 +52,7 @@ class Lexer:
 
         self.cur_pos = -1
         self.cur_char = ""
+        self.cur_line = 1
 
         self.next_char()
 
@@ -82,18 +84,19 @@ class Lexer:
         token = None
 
         if self.cur_char == "\0":
-            token = Token("", TokenType.EOF)
+            token = Token("", TokenType.EOF, self.cur_line)
         elif self.cur_char == "\n":
-            token = Token("", TokenType.NL)
+            token = Token("", TokenType.NL, self.cur_line)
+            self.cur_line += 1
         elif self.cur_char == ",":
-            token = Token(self.cur_char, TokenType.COMMA)
+            token = Token(self.cur_char, TokenType.COMMA, self.cur_line)
         elif self.cur_char == ":":
-            token = Token(self.cur_char, TokenType.COLON)
+            token = Token(self.cur_char, TokenType.COLON, self.cur_line)
         elif self.cur_char.isdigit():
             start_pos = self.cur_pos
             while self.peek_char().isdigit():
                 self.next_char()
-            token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.NUMBER)
+            token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.NUMBER, self.cur_line)
         elif self.cur_char == "-":
             start_pos = self.cur_pos
             while self.peek_char().isdigit():
@@ -101,13 +104,13 @@ class Lexer:
             token_text = self.source[start_pos : self.cur_pos + 1]
             if len(token_text) < 2:
                 sys.exit(f"expected number found ({self.peek_char()})")
-            token = Token(token_text, TokenType.NUMBER)
+            token = Token(token_text, TokenType.NUMBER, self.cur_line)
         elif self.cur_char == "\"":
             start_pos = self.cur_pos + 1
             while self.peek_char() != "\"" and self.peek_char() != "\n":
                 self.next_char()
             if self.peek_char() == "\"":
-                token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.STRING)
+                token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.STRING, self.cur_line)
                 self.next_char()
             else:
                 sys.exit(f"expected (\") found ({self.peek_char()})")
@@ -120,9 +123,9 @@ class Lexer:
             token_type = Token.is_keyword(token_text)
 
             if token_type != None:
-                token = Token(token_text, token_type)
+                token = Token(token_text, token_type, self.cur_line)
             else:
-                token = Token(token_text, TokenType.IDENT)
+                token = Token(token_text, TokenType.IDENT, self.cur_line)
         else:
             sys.exit(f"Unkown token ({self.cur_char})")
 
