@@ -1,5 +1,6 @@
 import sys
 from lexer import *
+from parser import *
 
 EOI = "EOI"
 
@@ -78,11 +79,8 @@ def main():
             sys.exit(f"could not open file {sys.argv[1]}")
 
     lexer = Lexer(program)
-
-    token = lexer.get_token()
-    while token.type != TokenType.EOF:
-        print(token.type, token.text)
-        token = lexer.get_token()
+    parser = Parser(lexer)
+    parser.program()
 
 
 def preprocess():

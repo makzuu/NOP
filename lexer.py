@@ -86,9 +86,9 @@ class Lexer:
         elif self.cur_char == "\n":
             token = Token("", TokenType.NL)
         elif self.cur_char == ",":
-            token = Token("", TokenType.COMMA)
+            token = Token(self.cur_char, TokenType.COMMA)
         elif self.cur_char == ":":
-            token = Token("", TokenType.COLON)
+            token = Token(self.cur_char, TokenType.COLON)
         elif self.cur_char.isdigit():
             start_pos = self.cur_pos
             while self.peek_char().isdigit():
