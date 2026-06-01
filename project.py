@@ -1,4 +1,5 @@
 import sys
+from lexer import *
 
 EOI = "EOI"
 
@@ -65,60 +66,23 @@ TOKEN_KIND_INS = "INSTRUCTION"
 TOKEN_KIND_COMMA = "COMMA"
 TOKEN_KIND_REGISTER = "REGISTER"
 
-class Token:
-    def __init__(self, kind, text):
-        self.kind = kind
-        self.text = text
-
-    def __str__(self):
-        return f"({self.kind} {self.text})"
-
 def main():
-    program = "MOV 1, ACC\nADD 1"
-    lines = program.split("\n")
+    program = ""
+    if len(sys.argv) != 2:
+        sys.exit(f"usage:\n\tpython {sys.argv[0]} <file>")
+    else:
+        try:
+            with open(sys.argv[1]) as f:
+                program = f.read()
+        except FileNotFoundError:
+            sys.exit(f"could not open file {sys.argv[1]}")
 
-    # extrae tokens
-    tokens = []
-    for i, line in enumerate(lines):
-        j = 0
-        while j < len(line):
-            tok = ""
-            if line[j].isspace():
-                while j < len(line) and line[j].isspace():
-                    j += 1
-            elif line[j].isalpha():
-                while j < len(line) and line[j].isalpha():
-                    tok += line[j]
-                    j += 1
-                tok = tok.upper()
-                if tok in ["MOV", "ADD"]:
-                    tokens.append(Token(TOKEN_KIND_INS, tok))
-                elif tok == "ACC":
-                    tokens.append(Token(TOKEN_KIND_REGISTER, tok))
-                else:
-                    sys.exit(f"invalid shaiza: {tok}, line: {i}")
-            elif line[j].isdigit():
-                while j < len(line) and line[j].isdigit():
-                    tok += line[j]
-                    j += 1
-                tokens.append(Token(TOKEN_KIND_INT, tok))
-            else:
-                tok = line[j]
-                j += 1
-                if tok in [","]:
-                    tokens.append(Token(TOKEN_KIND_COMMA, tok))
-                else:
-                    sys.exit(f"invalid shaiza: {tok}, line: {i}")
+    lexer = Lexer(program)
 
-    for token in tokens:
-        print(token)
-
-    # analiza orden
-
-    # analiza logica
-
-    # ejecuta
-
+    token = lexer.get_token()
+    while token.type != TokenType.EOF:
+        print(token.type, token.text)
+        token = lexer.get_token()
 
 
 def preprocess():

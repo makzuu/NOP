@@ -2,7 +2,7 @@
 
 ### LABELS
 
-syntax: <LABEL>:
+syntax: `<LABEL>:`
 
 ### MOV
 
@@ -61,7 +61,7 @@ class TokenType(Enum):
     COMMA   = 1
     COLON   = 2
 
-    # Instructions
+    # Keywords
     MOV     = 101
     SWP     = 102
     SAV     = 103
@@ -75,14 +75,15 @@ class TokenType(Enum):
     JLZ     = 111
     JRO     = 112
     PRINT   = 113
+    ACC     = 114
+    IN      = 115
+    OUT     = 116
+    STACK   = 117
+    SCREEN  = 118
 
     IDENT   = 201
     STRING  = 202
-    ACC     = 203
-    IN      = 204
-    OUT     = 205
-    STACK   = 206
-    SCREEN  = 207
+    NUMBER  = 203
 ```
 
 ## Grammar
