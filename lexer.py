@@ -77,6 +77,13 @@ class Lexer:
             while self.cur_char != "\n":
                 self.next_char()
 
+    def print_and_exit(self, msg):
+        error_msg = (
+                "ERROR:\n"
+                f"\tLine {self.cur_line}: {msg}"
+                )
+        sys.exit(error_msg)
+
     def get_token(self):
         self.skip_whitespace()
         self.skip_comments()
@@ -84,9 +91,9 @@ class Lexer:
         token = None
 
         if self.cur_char == "\0":
-            token = Token("", TokenType.EOF, self.cur_line)
+            token = Token("EOF", TokenType.EOF, self.cur_line)
         elif self.cur_char == "\n":
-            token = Token("", TokenType.NL, self.cur_line)
+            token = Token("NL", TokenType.NL, self.cur_line)
             self.cur_line += 1
         elif self.cur_char == ",":
             token = Token(self.cur_char, TokenType.COMMA, self.cur_line)
@@ -103,7 +110,7 @@ class Lexer:
                 self.next_char()
             token_text = self.source[start_pos : self.cur_pos + 1]
             if len(token_text) < 2:
-                sys.exit(f"expected number found ({self.peek_char()})")
+                self.print_and_exit(f"({self.peek_char()}) is not a number.")
             token = Token(token_text, TokenType.NUMBER, self.cur_line)
         elif self.cur_char == "\"":
             start_pos = self.cur_pos + 1
@@ -113,7 +120,7 @@ class Lexer:
                 token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.STRING, self.cur_line)
                 self.next_char()
             else:
-                sys.exit(f"expected (\") found ({self.peek_char()})")
+                self.print_and_exit("Unterminated string literal.")
         elif self.cur_char.isalpha():
             start_pos = self.cur_pos
             while self.peek_char().isalnum():
@@ -127,7 +134,7 @@ class Lexer:
             else:
                 token = Token(token_text, TokenType.IDENT, self.cur_line)
         else:
-            sys.exit(f"Unkown token ({self.cur_char})")
+            self.print_and_exit(f"Unkown token ({self.cur_char})")
 
         self.next_char()
 
