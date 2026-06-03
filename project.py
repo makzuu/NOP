@@ -1,6 +1,7 @@
 import sys
 from lexer import *
 from parser import *
+from eval import *
 
 
 def main():
@@ -15,8 +16,10 @@ def main():
             sys.exit(f"could not open file {sys.argv[1]}")
 
     lexer = Lexer(program)
-    parser = Parser(lexer)
+    eval = Eval()
+    parser = Parser(lexer, eval)
     parser.program()
+    eval.run()
 
 
 if __name__ == "__main__":
