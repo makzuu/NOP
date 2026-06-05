@@ -117,3 +117,10 @@ readable ::= "ACC" | "IN" | "STACK"
 writable ::= "ACC" | "OUT" | "STACK" | "SCREEN"
 nl ::= nl+
 ```
+
+- [ ] print no deberia poder imprimir un valor proveniente de IN
+- [ ] aunque innesario, lo logico seria que tambien se pueda imprimir un numero
+
+pensandolo bien, voy a sacar print.
+
+con respecto a si es logico algo como `MOV IN, OUT`, lo dejare al criterio del usuario (yo).
