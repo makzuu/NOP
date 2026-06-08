@@ -1,4 +1,5 @@
 import sys
+from image.screen import Screen
 
 class Stack:
     def __init__(self):
@@ -21,6 +22,7 @@ class State:
         self.acc = 0
         self.bak = 0
         self.stack = Stack()
+        self.screen_data = []
 
 class Ins:
     def __init__(self, name):
@@ -108,6 +110,9 @@ class Eval:
 
             i += 1
 
+        if len(self.state.screen_data) != 0:
+            Screen(self.state.screen_data).draw()
+
     def get_input(self):
         try:
             return int(input("> "))
@@ -134,7 +139,7 @@ class Eval:
             self.state.stack.push(src_value)
         # TODO: queda para despues :>
         elif dst == "SCREEN":
-            ...
+            self.state.screen_data.append(src_value)
 
     def swp(self):
         tmp = self.state.acc
