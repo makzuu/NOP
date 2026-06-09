@@ -15,12 +15,6 @@ class Color(Enum):
                 return color
         return Color.BLACK
 
-    @staticmethod
-    def is_terminating_value(value):
-        if value < 0:
-            return True
-        return False
-
 
 class Pixel:
     def __init__(self, x, y, color):
@@ -56,7 +50,7 @@ class ImageParser:
                 x = self.cur
             elif y == None:
                 y = self.cur
-            elif Color.is_terminating_value(self.cur):
+            elif ImageParser.is_terminating_value(self.cur):
                 x, y = None, None
                 x_offset = 0
             else:
@@ -66,6 +60,12 @@ class ImageParser:
             self.next()
 
         return self.pixels
+
+    @staticmethod
+    def is_terminating_value(value):
+        if value < 0:
+            return True
+        return False
 
 
 def main():
