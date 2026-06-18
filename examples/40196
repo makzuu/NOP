@@ -1,0 +1,41 @@
+# read a value from in
+# look for the patter 0, 0, 0
+# write 1 when pattern is found
+# if not true, write 0 instead
+
+
+#                    v
+# [0, 1, 0, 0, 0, 0, 69]
+# acc = -3
+# bak = 0
+# output = 0
+
+# bak = counter
+start:
+read
+pop acc
+jez zero
+# set counter to zero
+swp
+mov 0, acc
+sav
+jmp result
+
+# update counter
+zero:
+swp
+add 1
+sav
+
+# write result
+result:
+sub 3
+jlz notfound
+
+write 1
+jro 2
+
+notfound:
+write nil
+
+jmp start

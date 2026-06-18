@@ -14,8 +14,12 @@ jgz <label> - jump to <label> if acc > 0
 jlz <label> - jump to <label> if acc < 0
 jro <src> - jump to relative offset <src> (los labels no cuentan)
 
-read - read input and mov it to the stack
-write - write acc to output
+push <src> - push <src> to the stack
+pop <dst> - mov the value at the top of the stack to <dst>
+read - read input and push it to the stack
+write <src> - write <src> to output
+
+nil - 0 when used as <src>. discard a value when used as <dst>.
 
 --- posible parameters
 

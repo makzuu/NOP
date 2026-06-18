@@ -1,0 +1,43 @@
+# sequences are zero-terminated
+# read a sequence from in
+# write the min value to out
+# write the max value to out
+
+jmp start
+
+minmax:
+push bp
+mov sp, bp
+
+define max, 0
+define min, 1
+define index, 2
+
+push nil
+push nil
+push nil
+
+# [2, 4, 1, 0, nexti, bp, 0, 0, 0]
+mov -6, bp(index)
+mov 999, min
+mov -999, max
+
+minmaxloop:
+mov bp(index), acc
+sub bp(min)
+
+# TODO
+
+mov bp, sp
+pop bp
+
+ret
+
+start:
+# read values till 0 is found
+loop:
+read
+mov sp(-1), acc		# the stack pointer points to the position the next value will be pushed
+jnz loop
+
+call max
