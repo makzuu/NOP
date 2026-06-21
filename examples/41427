@@ -5,28 +5,43 @@
 
 jmp start
 
-minmax:
+max:
 push bp
 mov sp, bp
 
 define max, 0
-define min, 1
-define index, 2
+define index, 1
 
 push nil
 push nil
-push nil
 
-# [2, 4, 1, 0, nexti, bp, 0, 0, 0]
+#  v bp
+# [2, 4, 1, 0, nexti, bp, -5, 4]
+#              ^ sp
+# acc = 3
+
 mov -6, bp(index)
-mov 999, min
-mov -999, max
+mov -999, bp(max)
 
-minmaxloop:
+getmax:
+mov *bp(index), acc
+jez endgetmax
+
+mov bp(max), acc
+sub *bp(index)
+jlz newmax
+jro 2
+
+newmax:
+mov *bp(index), bp(max)
+
 mov bp(index), acc
-sub bp(min)
+add 1
+mov acc, bp(index)
+jmp getmax
 
-# TODO
+endgetmax:
+mov bp(max), acc
 
 mov bp, sp
 pop bp
@@ -41,3 +56,4 @@ mov sp(-1), acc		# the stack pointer points to the position the next value will 
 jnz loop
 
 call max
+write acc
