@@ -2,34 +2,44 @@ from enum import Enum
 import sys
 
 class TokenType(Enum):
-    EOF     = -1
-    NL      = 0
-    COMMA   = 1
-    COLON   = 2
+    EOF                 =  -1
+    NL                  =   0
+    COMMA               =   1
+    COLON               =   2
+    ASTERISK            =   3
+    OPEN_PAREN          =   4
+    CLOSE_PAREN         =   5
 
     # Keywords
-    MOV     = 101
-    SWP     = 102
-    SAV     = 103
-    ADD     = 104
-    SUB     = 105
-    NEG     = 106
-    JMP     = 107
-    JEZ     = 108
-    JNZ     = 109
-    JGZ     = 110
-    JLZ     = 111
-    JRO     = 112
-    PRINT   = 113
-    ACC     = 114
-    IN      = 115
-    OUT     = 116
-    STACK   = 117
-    SCREEN  = 118
+    NOP                 = 101
+    MOV                 = 102
+    SWP                 = 103
+    SAV                 = 104
+    ADD                 = 105
+    SUB                 = 106
+    NEG                 = 107
+    JMP                 = 108
+    JEZ                 = 109
+    JNZ                 = 110
+    JGZ                 = 111
+    JLZ                 = 112
+    JRO                 = 113
 
-    IDENT   = 201
-    STRING  = 202
-    NUMBER  = 203
+    PUSH                = 114
+    POP                 = 115
+    READ                = 116
+    WRITE               = 117
+    DEFINE              = 118
+    CALL                = 119
+    RET                 = 120
+
+    ACC                 = 121
+    NIL                 = 122
+    BP                  = 123
+    SP                  = 124
+
+    IDENT               = 201
+    NUMBER              = 202
 
 
 class Token:
@@ -41,7 +51,7 @@ class Token:
     @staticmethod
     def is_keyword(text):
         for token_type in TokenType:
-            if text == token_type.name and token_type.value > 100 and token_type.value < 200:
+            if text.lower() == token_type.name.lower() and token_type.value > 100 and token_type.value < 200:
                 return token_type
         return None
 
@@ -99,31 +109,23 @@ class Lexer:
             token = Token(self.cur_char, TokenType.COMMA, self.cur_line)
         elif self.cur_char == ":":
             token = Token(self.cur_char, TokenType.COLON, self.cur_line)
-        elif self.cur_char.isdigit():
-            start_pos = self.cur_pos
-            while self.peek_char().isdigit():
-                self.next_char()
-            token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.NUMBER, self.cur_line)
-        elif self.cur_char == "-":
+        elif self.cur_char == "*":
+            token = Token(self.cur_char, TokenType.ASTERISK, self.cur_line)
+        elif self.cur_char == "(":
+            token = Token(self.cur_char, TokenType.OPEN_PAREN, self.cur_line)
+        elif self.cur_char == ")":
+            token = Token(self.cur_char, TokenType.CLOSE_PAREN, self.cur_line)
+        elif self.cur_char.isdigit() or self.cur_char == "-":
             start_pos = self.cur_pos
             while self.peek_char().isdigit():
                 self.next_char()
             token_text = self.source[start_pos : self.cur_pos + 1]
-            if len(token_text) < 2:
+            if token_text == "-":
                 self.print_and_exit(f"({self.peek_char()}) is not a number.")
             token = Token(token_text, TokenType.NUMBER, self.cur_line)
-        elif self.cur_char == "\"":
-            start_pos = self.cur_pos + 1
-            while self.peek_char() != "\"" and self.peek_char() != "\n":
-                self.next_char()
-            if self.peek_char() == "\"":
-                token = Token(self.source[start_pos : self.cur_pos + 1], TokenType.STRING, self.cur_line)
-                self.next_char()
-            else:
-                self.print_and_exit("Unterminated string literal.")
-        elif self.cur_char.isalpha():
+        elif self.cur_char.isalpha() or self.cur_char == "_":
             start_pos = self.cur_pos
-            while self.peek_char().isalnum():
+            while self.peek_char().isalnum() or self.peek_char() == "_":
                 self.next_char()
 
             token_text = self.source[start_pos : self.cur_pos + 1]

@@ -1,25 +1,27 @@
 import sys
 from lexer import *
-from parser import *
-from eval import *
-
 
 def main():
-    program = ""
-    if len(sys.argv) != 2:
-        sys.exit(f"usage:\n\tpython {sys.argv[0]} <file>")
-    else:
-        try:
-            with open(sys.argv[1]) as f:
-                program = f.read()
-        except FileNotFoundError:
-            sys.exit(f"could not open file {sys.argv[1]}")
+    if len(sys.argv) < 2:
+        sys.exit(f"usage: {sys.argv[0]} <program>")
+    source = get_source(sys.argv[1])
+    lex = Lexer(source)
 
-    lexer = Lexer(program)
-    eval = Eval()
-    parser = Parser(lexer, eval)
-    parser.program()
-    eval.run()
+    token = lex.get_token()
+    while token.type != TokenType.EOF:
+        print(token.type, token.text)
+        token = lex.get_token()
+
+
+
+def get_source(filename):
+    try:
+        with open(filename) as f:
+            source = f.read()
+    except FileNotFoundError:
+        sys.exit(f"file {filename} does not exist")
+    return source
+
 
 if __name__ == "__main__":
     main()
