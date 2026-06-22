@@ -2,9 +2,10 @@ from lexer import *
 import sys
 
 class Parser:
-    def __init__(self, lexer, eval):
+    # def __init__(self, lexer, eval):
+    def __init__(self, lexer):
         self.lexer = lexer
-        self.eval = eval
+        # self.eval = eval
 
         self.cur_token = None
         self.next_token()
@@ -141,46 +142,71 @@ class Parser:
         self.nl()
 
 
-    def src(self):
-        print("SRC")
-        if self.check_type(TokenType.NUMBER):
-            self.eval.add_param(self.cur_token.text)
-            self.next_token()
-        else:
-            self.readable()
-
     def dst(self):
         print("DST")
-        self.writable()
-
-    def readable(self):
-        print("READABLE")
-        if self.check_type(TokenType.ACC):
-            self.eval.add_param(self.cur_token.text)
+        if check_type(TokenType.ACC):
             self.next_token()
-        elif self.check_type(TokenType.IN):
-            self.eval.add_param(self.cur_token.text)
+        elif self.check_type(TokenType.BP):
             self.next_token()
-        elif self.check_type(TokenType.STACK):
-            self.eval.add_param(self.cur_token.text)
+            self.match_type(TokenType.OPEN_PAREN)
+            self.expression()
+            self.match_type(TokenType.CLOSE_PAREN)
+        elif self.check_type(TokenType.SP):
             self.next_token()
+            self.match_type(TokenType.OPEN_PAREN)
+            self.expression()
+            self.match_type(TokenType.CLOSE_PAREN)
+        elif self.check_type(TokenType.ASTERISK):
+            self.next_token()
+            if self.check_type(TokenType.BP):
+                self.next_token()
+                self.match_type(TokenType.OPEN_PAREN)
+                self.expression()
+                self.match_type(TokenType.CLOSE_PAREN)
+            elif self.check_type(TokenType.SP):
+                self.next_token()
+                self.match_type(TokenType.OPEN_PAREN)
+                self.expression()
+                self.match_type(TokenType.CLOSE_PAREN)
+            else:
+                self.print_and_exit(f"invalid token ({self.cur_token.text})")
         else:
             self.print_and_exit(f"invalid token ({self.cur_token.text})")
 
-    def writable(self):
-        print("WRITABLE")
-        if self.check_type(TokenType.ACC):
-            self.eval.add_param(self.cur_token.text)
+    def expression(self):
+        print("EXPRESSION")
+        if self.check_type(TokenType.NUMBER):
             self.next_token()
-        elif self.check_type(TokenType.OUT):
-            self.eval.add_param(self.cur_token.text)
+        elif self.check_type(TokenType.NIL):
             self.next_token()
-        elif self.check_type(TokenType.STACK):
-            self.eval.add_param(self.cur_token.text)
+        elif self.check_type(TokenType.ACC):
             self.next_token()
-        elif self.check_type(TokenType.SCREEN):
-            self.eval.add_param(self.cur_token.text)
+        elif self.check_type(TokenType.IDENT):
             self.next_token()
+        elif self.check_type(TokenType.BP):
+            self.next_token()
+            self.match_type(TokenType.OPEN_PAREN)
+            self.expression()
+            self.match_type(TokenType.CLOSE_PAREN)
+        elif self.check_type(TokenType.SP):
+            self.next_token()
+            self.match_type(TokenType.OPEN_PAREN)
+            self.expression()
+            self.match_type(TokenType.CLOSE_PAREN)
+        elif self.check_type(TokenType.ASTERISK):
+            self.next_token()
+            if self.check_type(TokenType.BP):
+                self.next_token()
+                self.match_type(TokenType.OPEN_PAREN)
+                self.expression()
+                self.match_type(TokenType.CLOSE_PAREN)
+            elif self.check_type(TokenType.SP):
+                self.next_token()
+                self.match_type(TokenType.OPEN_PAREN)
+                self.expression()
+                self.match_type(TokenType.CLOSE_PAREN)
+            else:
+                self.print_and_exit(f"invalid token ({self.cur_token.text})")
         else:
             self.print_and_exit(f"invalid token ({self.cur_token.text})")
 
