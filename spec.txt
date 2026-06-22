@@ -34,38 +34,44 @@ nil			- 0 when used as <src>. discard a value when used as <dst>.
 program ::= {statement}
 
 statement ::=
-	| nop
-	| mov expression "," # TODO:
-	| swp
-	| sav
-	| add # TODO:
-	| sub # TODO:
-	| neg
-	| jmp label
-	| jez label
-	| jnz label
-	| jgz label
-	| jlz label
-	| jro # TODO:
+	| nop nl
+	| mov expression "," dst nl
+	| swp nl
+	| sav nl
+	| add expression nl
+	| sub expression nl
+	| neg nl
+	| jmp indent nl
+	| jez indent nl
+	| jnz indent nl
+	| jgz indent nl
+	| jlz indent nl
+	| jro expression nl
 
-	| label # TODO:
-	| push # TODO:
-	| pop # TODO:
-	| read # TODO:
-	| write # TODO:
-	| define # TODO:
-	| call # TODO:
-	| ret # TODO
+	| indent ":"
+	| push expression nl
+	| pop dst nl
+	| read nl
+	| write expression nl
+	| define indent "," expression nl
+	| call indent nl
+	| ret nl
 
-expression ::= 
+dst ::=
+	| acc
+	| bp "(" expression ")"
+	| "*" bp "(" expression ")"
+	| sp "(" expression ")"
+	| "*" sp "(" expression ")"
+
+expression ::=
 	| number
 	| nil
 	| acc
 	| const
-	| "bp" "(" expression ")"
-	| "*" "bp" "(" expression ")"
-	| "sp" "(" expression ")"
-	| "*" "sp" "(" expression ")"
+	| bp "(" expression ")"
+	| "*" bp "(" expression ")"
+	| sp "(" expression ")"
+	| "*" sp "(" expression ")"
 
 nl ::= nl+
-
