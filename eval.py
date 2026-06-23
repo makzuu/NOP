@@ -1,29 +1,6 @@
 import sys
 from image.screen import Screen
 
-class Stack:
-    def __init__(self):
-        self.stack = []
-
-    def push(self, value):
-        self.stack.append(value)
-
-    def pop(self):
-        try:
-            return self.stack.pop()
-        except IndexError:
-            return 0
-
-    def peek(self):
-        return self.stack[-1]
-
-class State:
-    def __init__(self):
-        self.acc = 0
-        self.bak = 0
-        self.stack = Stack()
-        self.screen_data = []
-
 class Ins:
     def __init__(self, name):
         self.name = name

@@ -1,17 +1,16 @@
 import sys
 from lexer import *
+from parser import *
+from state import State
 
 def main():
     if len(sys.argv) < 2:
         sys.exit(f"usage: {sys.argv[0]} <program>")
     source = get_source(sys.argv[1])
     lex = Lexer(source)
-
-    token = lex.get_token()
-    while token.type != TokenType.EOF:
-        print(token.type, token.text)
-        token = lex.get_token()
-
+    state = State()
+    parser = Parser(lex, state)
+    parser.program()
 
 
 def get_source(filename):

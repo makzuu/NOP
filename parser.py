@@ -3,8 +3,9 @@ import sys
 
 class Parser:
     # def __init__(self, lexer, eval):
-    def __init__(self, lexer):
+    def __init__(self, lexer, state):
         self.lexer = lexer
+        self.state = state
         # self.eval = eval
 
         self.cur_token = None
@@ -45,97 +46,60 @@ class Parser:
     # despues de definirlos o algo asi. no se, tengo sueño
     def statement(self):
         print("STATEMENT")
-        # ident ":"
-        if self.check_type(TokenType.IDENT):
-            self.eval.add_label(self.cur_token.text)
-            self.next_token()
-            self.match_type(TokenType.COLON)
-        # "MOV" src "," dst
+
+        if self.check_type(TokenType.NOP):
+            ...
         elif self.check_type(TokenType.MOV):
-            self.eval.add_ins("MOV")
+            print("MOV")
             self.next_token()
-            self.src()
+            print(self.expression())
             self.match_type(TokenType.COMMA)
+            print(",")
             self.dst()
-            self.eval.done()
-        # "SWP"
         elif self.check_type(TokenType.SWP):
-            self.eval.add_ins("SWP")
-            self.eval.done()
             self.next_token()
-        # "SAV"
         elif self.check_type(TokenType.SAV):
-            self.eval.add_ins("SAV")
-            self.eval.done()
             self.next_token()
-        # "ADD" src
         elif self.check_type(TokenType.ADD):
-            self.eval.add_ins("ADD")
             self.next_token()
-            self.src()
-            self.eval.done()
-        # "SUB" src
+            expression_value = self.expression()
         elif self.check_type(TokenType.SUB):
-            self.eval.add_ins("SUB")
             self.next_token()
-            self.src()
-            self.eval.done()
-        # "NEG"
+            expression_value = self.expression()
         elif self.check_type(TokenType.NEG):
-            self.eval.add_ins("NEG")
-            self.eval.done()
             self.next_token()
-        # "JMP" ident
         elif self.check_type(TokenType.JMP):
-            self.eval.add_ins("JMP")
-            self.next_token()
-            self.eval.add_param(self.cur_token.text)
-            self.match_type(TokenType.IDENT)
-            self.eval.done()
-        # "JEZ" ident
+            ...
         elif self.check_type(TokenType.JEZ):
-            self.eval.add_ins("JEZ")
-            self.next_token()
-            self.eval.add_param(self.cur_token.text)
-            self.match_type(TokenType.IDENT)
-            self.eval.done()
-        # "JNZ" ident
+            ...
         elif self.check_type(TokenType.JNZ):
-            self.eval.add_ins("JNZ")
-            self.next_token()
-            self.eval.add_param(self.cur_token.text)
-            self.match_type(TokenType.IDENT)
-            self.eval.done()
-        # "JGZ" ident
+            ...
         elif self.check_type(TokenType.JGZ):
-            self.eval.add_ins("JGZ")
-            self.next_token()
-            self.eval.add_param(self.cur_token.text)
-            self.match_type(TokenType.IDENT)
-            self.eval.done()
-        # "JLZ" ident
+            ...
         elif self.check_type(TokenType.JLZ):
-            self.eval.add_ins("JLZ")
-            self.next_token()
-            self.eval.add_param(self.cur_token.text)
-            self.match_type(TokenType.IDENT)
-            self.eval.done()
-        # "JRO" src
+            ...
         elif self.check_type(TokenType.JRO):
-            self.eval.add_ins("JRO")
             self.next_token()
-            self.src()
-            self.eval.done()
-        # "PRINT" readable | string
-        elif self.check_type(TokenType.PRINT):
-            self.eval.add_ins("PRINT")
+            expression_value = self.expression()
+        elif self.check_type(TokenType.IDENT):
+            ...
+        elif self.check_type(TokenType.PUSH):
             self.next_token()
-            if self.check_type(TokenType.STRING):
-                self.eval.add_param(self.cur_token.text)
-                self.next_token()
-            else:
-                self.readable()
-            self.eval.done()
+            expression_value = self.expression()
+            self.state.push(expression_value)
+        elif self.check_type(TokenType.POP):
+            ...
+        elif self.check_type(TokenType.READ):
+            self.next_token()
+        elif self.check_type(TokenType.WRITE):
+            self.next_token()
+            expression_value = self.expression()
+        elif self.check_type(TokenType.DEFINE):
+            ...
+        elif self.check_type(TokenType.CALL):
+            ...
+        elif self.check_type(TokenType.RET):
+            self.next_token()
         else:
             self.print_and_exit(f"invalid token ({self.cur_token.text})")
 
@@ -144,7 +108,8 @@ class Parser:
 
     def dst(self):
         print("DST")
-        if check_type(TokenType.ACC):
+        if self.check_type(TokenType.ACC):
+            print("ACC")
             self.next_token()
         elif self.check_type(TokenType.BP):
             self.next_token()
@@ -176,36 +141,56 @@ class Parser:
     def expression(self):
         print("EXPRESSION")
         if self.check_type(TokenType.NUMBER):
+            number_value = int(self.cur_token.text)
             self.next_token()
+            return int(number_value)
         elif self.check_type(TokenType.NIL):
             self.next_token()
+            return 0
         elif self.check_type(TokenType.ACC):
+            print("ACC")
             self.next_token()
+            return self.state.acc
         elif self.check_type(TokenType.IDENT):
             self.next_token()
+            return self.state.consts[self.cur_token.text]
+        # bp "(" expression ")"
         elif self.check_type(TokenType.BP):
             self.next_token()
             self.match_type(TokenType.OPEN_PAREN)
-            self.expression()
+            expression_value = self.expression()
             self.match_type(TokenType.CLOSE_PAREN)
+            # stack[bp + offset]
+            return self.state.index(self.state.bp + expression_value)
+        # sp "(" expression ")"
         elif self.check_type(TokenType.SP):
             self.next_token()
             self.match_type(TokenType.OPEN_PAREN)
-            self.expression()
+            expression_value = self.expression()
             self.match_type(TokenType.CLOSE_PAREN)
+            # stack[sp + offset]
+            return self.state.index(self.state.sp + expression_value)
         elif self.check_type(TokenType.ASTERISK):
             self.next_token()
+            # "*" bp "(" expression ")"
             if self.check_type(TokenType.BP):
                 self.next_token()
                 self.match_type(TokenType.OPEN_PAREN)
-                self.expression()
+                expression_value = self.expression()
                 self.match_type(TokenType.CLOSE_PAREN)
+                # stack[stack[bp + offset]]
+                return self.state.index(self.state.index(self.state.bp + expression_value))
             elif self.check_type(TokenType.SP):
                 self.next_token()
                 self.match_type(TokenType.OPEN_PAREN)
-                self.expression()
+                expression_value = self.expression()
                 self.match_type(TokenType.CLOSE_PAREN)
+                # stack[stack[sp + offset]]
+                return self.state.index(self.state.index(self.state.sp + expression_value))
             else:
+list.insert(index, value, /)
+Insert an item at a given position. The first argument is the index of the element before which to insert, so a.insert(0, x) inserts at the front of the list, and a.insert(len(a), x) is equivalent to a.append(x).
+
                 self.print_and_exit(f"invalid token ({self.cur_token.text})")
         else:
             self.print_and_exit(f"invalid token ({self.cur_token.text})")
