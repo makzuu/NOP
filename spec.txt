@@ -57,25 +57,25 @@ statement ::=
 	| call indent nl
 	| ret nl
 
-dst ::=
-	| acc
-	| bp					# bp
-	| bp "(" expression ")"			# bp + expression
-	| "*" bp "(" expression ")"		# stack[bp + expression]
-	| sp
-	| sp "(" expression ")"
-	| "*" sp "(" expression ")"
+dst ::= acc
+      | bp					# bp
+      | sp
+      | bp "(" primary ")"			# bp + expression
+      | "*" bp "(" primary ")"		   	# stack[bp + expression]
+      | sp "(" primary ")"
+      | "*" sp "(" primary ")"
 
-expression ::=
-	| number
-	| nil
-	| acc
-	| const
-	| bp					# stack[bp]
-	| bp "(" expression ")"			# stack[bp + expression]
-	| "*" bp "(" expression ")"		# stack[stack[bp + expression]]
+expression ::= primary
+	| bp					# bp
 	| sp
-	| sp "(" expression ")"
-	| "*" sp "(" expression ")"
+	| bp "(" primary ")"			# stack[bp + expression]
+	| "*" bp "(" primary ")"		# stack[stack[bp + expression]]
+	| sp "(" primary ")"
+	| "*" sp "(" primary ")"
+
+primary ::= number
+	  | nil
+	  | acc
+	  | indent
 
 nl ::= nl+
