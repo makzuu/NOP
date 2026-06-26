@@ -8,6 +8,9 @@ class Parser:
         self.state = state
         # self.eval = eval
 
+        self.initialize()
+
+    def initialize(self):
         self.cur_token = None
         self.next_token()
 
@@ -30,11 +33,31 @@ class Parser:
                 )
         sys.exit(error_msg)
 
+    def skip_nl(self):
+        while self.cur_token.type == TokenType.NL:
+            self.next_token()
+
+    def preprocess(self):
+        self.skip_nl()
+
+        while self.cur_token.type != TokenType.EOF:
+            if self.check_type(TokenType.IDENT):
+                label = self.cur_token.text
+                line = self.cur_token.line
+                self.next_token()
+                if self.check_type(TokenType.COLON):
+                    self.next_token()
+                    if label in self.state.labels:
+                        self.print_and_exit(f"{label} already defined")
+                    else:
+                        self.state.labels[label] = line
+            self.next_token()
+        self.initialize()
+
     def program(self):
         print("PROGRAM")
 
-        while self.cur_token.type == TokenType.NL:
-            self.next_token()
+        self.skip_nl()
 
         while self.cur_token.type != TokenType.EOF:
             self.statement()

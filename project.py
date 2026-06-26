@@ -10,7 +10,11 @@ def main():
     lex = Lexer(source)
     state = State()
     parser = Parser(lex, state)
-    parser.program()
+    parser.preprocess()
+    for label in state.labels:
+        print(label, state.labels[label])
+
+    # parser.program()
 
 
 def get_source(filename):
