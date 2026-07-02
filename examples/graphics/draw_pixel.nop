@@ -4,11 +4,6 @@
 jmp _start
 
 get_pixel:
-push nil		# x coordinate
-push nil		# y coordinate
-push nil		# color
-push -1
-
 read
 pop acc
 write acc
@@ -20,13 +15,13 @@ pop acc
 write acc
 jlz done
 # set y coordinate
-mov acc, bp(1)		# y
+mov acc, bp(1)
 read
 pop acc
 write acc
 jlz done
 # set color
-mov acc, bp(2)	# color
+mov acc, bp(2)
 mov 0, acc
 ret
 done:
@@ -35,6 +30,12 @@ ret
 
 _start:
 draw			# prepare drawing area
+
+push nil		# x coordinate
+push nil		# y coordinate
+push nil		# color
+push -1
+
 
 lup:
 call get_pixel
