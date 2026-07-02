@@ -1,6 +1,7 @@
 import sys
 import logger as log
 from token import TokenType
+from img import Img
 
 class Instruction:
     def __init__(self, name, params, line):
@@ -8,13 +9,14 @@ class Instruction:
         self.params = params
         self.line = line
 
-
 class Eval:
     def __init__(self, state):
         self.instructions = []
-        self.state = state
         self.tmp_instruction = None
         self.tmp_argument = None
+
+        self.state = state
+        self.img = None
 
     def add_label(self, name, line):
         if name in self.state.labels:
@@ -166,7 +168,7 @@ class Eval:
                 label = i_params["label"][0].text
                 line = i_params["label"][0].line
 
-                if self.state.acc >= 0:
+                if self.state.acc > 0:
                     i_num = self.get_instruction_number(label, line)
                     continue
 
@@ -174,7 +176,7 @@ class Eval:
                 label = i_params["label"][0].text
                 line = i_params["label"][0].line
 
-                if self.state.acc <= 0:
+                if self.state.acc < 0:
                     i_num = self.get_instruction_number(label, line)
                     continue
 
@@ -198,14 +200,23 @@ class Eval:
                     self.state.insert(self.get_dst_index(i_params["dst"]), self.state.pop())
 
             elif i_name == TokenType.READ.name:
-                try:
-                    number = self.limit(int(input("< ")))
-                except ValueError:
-                    number = 0
+                if self.img == None:
+                    try:
+                        number = self.limit(int(input("< ")))
+                    except ValueError:
+                        number = 0
+                else:
+                    try:
+                        number = self.limit(int(self.img.get_input()))
+                    except ValueError:
+                        number = 0
                 self.state.push(number)
 
             elif i_name == TokenType.WRITE.name:
-                print(">", self.get_src_value(i_params["src"]))
+                if self.img == None:
+                    print("> " + str(self.get_src_value(i_params["src"])))
+                else:
+                    self.img.write_output("> " + str(self.get_src_value(i_params["src"])))
 
             elif i_name == TokenType.CALL.name:
                 self.state.push(i_num + 1)
@@ -217,35 +228,9 @@ class Eval:
                 i_num = self.state.pop()
                 continue
 
-            # take at least 4 values from the stack ([bp:sp]):
-            # 2 for x and y
-            # 1 or more for color
-            # and a negative value that ends the sequence.
-            # if there are less that 4 values: ERROR!
-            # if x and y are outside of the drawing area: don't draw shit
             elif i_name == TokenType.DRAW.name:
-                w = 30
-                h = 18
-                draw_i = self.state.stack[self.state.bp:self.state.sp]
-                if len(draw_i) < 4:
-                    i_num += 1
-                    continue
-                if draw_i[-1] >= 0:
-                    i_num += 1
-                    continue
-                x, y = draw_i[0:2]
-                if x >= w or x < 0:
-                    i_num += 1
-                    continue
-                if y >= h or y < 0:
-                    i_num += 1
-                    continue
-
-                colors = draw_i[2:-1]
-                print(f"coor: {x}:{y}, colors: {colors}, end character: {draw_i[-1]}")
-
-                for color in colors:
-                    self.state.drawing_area[y][x] = "█"
-                    x += 1
+                if self.img == None:
+                    self.img = Img()
+                self.img.draw(self.state.stack[self.state.bp:self.state.sp])
 
             i_num += 1

@@ -13,8 +13,6 @@ class State:
         self.consts = {}
         self.labels = {}
 
-        self.drawing_area = [["@" for _ in range(30)] for _ in range(18)]
-
     def push(self, value):
         self.stack.append(value)
         self.sp += 1

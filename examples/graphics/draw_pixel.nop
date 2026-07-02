@@ -1,0 +1,45 @@
+# get x, y and color from user input and draw a pixel.
+# a value < 0 will exit the program
+
+jmp _start
+
+get_pixel:
+push nil		# x coordinate
+push nil		# y coordinate
+push nil		# color
+push -1
+
+read
+pop acc
+write acc
+jlz done
+# set x coordinate
+mov acc, bp(0)
+read
+pop acc
+write acc
+jlz done
+# set y coordinate
+mov acc, bp(1)		# y
+read
+pop acc
+write acc
+jlz done
+# set color
+mov acc, bp(2)	# color
+mov 0, acc
+ret
+done:
+mov 69, acc
+ret
+
+_start:
+draw			# prepare drawing area
+
+lup:
+call get_pixel
+jnz exit
+draw
+jmp lup
+
+exit:
