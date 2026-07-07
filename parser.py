@@ -1,5 +1,5 @@
 import logger as log
-from token import TokenType
+from tok import TokenType
 
 class Parser:
     def __init__(self, lexer, state, eval):

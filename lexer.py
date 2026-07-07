@@ -1,5 +1,5 @@
 import logger as log
-from token import *
+from tok import *
 
 
 class Lexer:

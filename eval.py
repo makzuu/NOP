@@ -1,6 +1,6 @@
 import sys
 import logger as log
-from token import TokenType
+from tok import TokenType
 from img import Img
 
 class Instruction:
