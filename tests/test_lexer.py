@@ -34,3 +34,18 @@ def test_unkown_token():
     lex.get_token()  # skip MOV token
     with pytest.raises(SystemExit):
         token = lex.get_token()
+
+def test_valid_tokens_invalid_code():
+    code = "ACC, MOV 0"
+    lex = Lexer(code)
+    expected_output = [
+            TokenType.ACC,
+            TokenType.COMMA,
+            TokenType.MOV,
+            TokenType.NUMBER,
+            TokenType.NL,
+            TokenType.EOF,
+    ]
+    for token_type in expected_output:
+        token = lex.get_token()
+        assert token.type == token_type
