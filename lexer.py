@@ -74,7 +74,7 @@ class Lexer:
             else:
                 token = Token(token_text, TokenType.IDENT, self.cur_line)
         else:
-            log.error(f"Unkown token ({self.cur_char})")
+            log.error(f"Unkown token ({self.cur_char})", self.cur_line)
 
         self.next_char()
 
