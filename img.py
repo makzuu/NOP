@@ -48,7 +48,7 @@ class Img:
             r, g, b = 255, 0, 0
             color = f"\033[38;2;{r};{g};{b}m"
 
-        return color + block + modesoff
+        return color + block * self.drawing_char_width + modesoff
 
     def draw(self, draw_instruction):
         if len(draw_instruction) < 4:
@@ -101,7 +101,7 @@ class Img:
         for rows in self.drawing_area:
             self.render_output()
             for cell in rows:
-               print(f"{cell*self.drawing_char_width}", end="")
+               print(cell, end="")
             print()
         sleep(self.sleep_time)
 
