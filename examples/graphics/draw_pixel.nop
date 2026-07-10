@@ -1,46 +1,42 @@
-# get x, y and color from user input and draw a pixel.
-# a value < 0 will exit the program
+jmp __START
 
-jmp _start
-
-get_pixel:
+GET_VALUE:
 read
 pop acc
-write acc
-jlz done
-# set x coordinate
+ret
+
+SET_X:
+call GET_VALUE
 mov acc, bp(0)
-read
-pop acc
-write acc
-jlz done
-# set y coordinate
+ret
+
+SET_Y:
+call GET_VALUE
 mov acc, bp(1)
-read
-pop acc
-write acc
-jlz done
-# set color
+ret
+
+SET_COLOR:
+call GET_VALUE
 mov acc, bp(2)
-mov 0, acc
-ret
-done:
-mov 69, acc
 ret
 
-_start:
-draw			# prepare drawing area
+CONTINUE:
+call GET_VALUE
+ret
 
-push nil		# x coordinate
-push nil		# y coordinate
-push nil		# color
+__START:
+push 0
+push 0
+push 3
 push -1
 
-
-lup:
-call get_pixel
-jnz exit
+MAIN_LOOP:
+call SET_X
+call SET_Y
+call SET_COLOR
 draw
-jmp lup
+call CONTINUE
+jez END_PROGRAM
+jmp MAIN_LOOP
 
-exit:
+END_PROGRAM:

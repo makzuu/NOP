@@ -1,0 +1,19 @@
+# x, y coordinates
+push 0
+push 0
+
+mov 30, acc
+LOOP: jez DONE
+push 3
+sub 1
+jmp LOOP
+DONE:
+push -1
+
+mov 16, acc
+DRAW_START: jlz DRAW_DONE
+mov acc, bp(1)
+draw
+sub 1
+jmp DRAW_START
+DRAW_DONE:
