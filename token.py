@@ -2,45 +2,45 @@ from enum import Enum
 
 
 class TokenType(Enum):
-    EOF                 =  -1
-    NL                  =   0
-    COMMA               =   1
-    COLON               =   2
-    ASTERISK            =   3
-    OPEN_PAREN          =   4
-    CLOSE_PAREN         =   5
+    EOF                     =  -1
+    NL                      =   0
+    COMMA                   =   1
+    COLON                   =   2
+    ASTERISK                =   3
+    OPEN_BRACKET            =   4
+    CLOSE_BRACKET           =   5
 
     # Keywords
-    NOP                 = 101
-    MOV                 = 102
-    SWP                 = 103
-    SAV                 = 104
-    ADD                 = 105
-    SUB                 = 106
-    NEG                 = 107
-    JMP                 = 108
-    JEZ                 = 109
-    JNZ                 = 110
-    JGZ                 = 111
-    JLZ                 = 112
-    JRO                 = 113
+    NOP                     = 101
+    MOV                     = 102
+    SWP                     = 103
+    SAV                     = 104
+    ADD                     = 105
+    SUB                     = 106
+    NEG                     = 107
+    JMP                     = 108
+    JEZ                     = 109
+    JNZ                     = 110
+    JGZ                     = 111
+    JLZ                     = 112
+    JRO                     = 113
 
-    PUSH                = 114
-    POP                 = 115
-    READ                = 116
-    WRITE               = 117
-    DEFINE              = 118
-    CALL                = 119
-    RET                 = 120
-    DRAW                = 121
+    PUSH                    = 114
+    POP                     = 115
+    READ                    = 116
+    WRITE                   = 117
+    DEFINE                  = 118
+    CALL                    = 119
+    RET                     = 120
+    DRAW                    = 121
 
-    ACC                 = 122
-    NIL                 = 123
-    BP                  = 124
-    SP                  = 125
+    ACC                     = 122
+    NIL                     = 123
+    BP                      = 124
+    SP                      = 125
 
-    IDENT               = 201
-    NUMBER              = 202
+    IDENT                   = 201
+    NUMBER                  = 202
 
 
 class Token:

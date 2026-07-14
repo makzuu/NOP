@@ -24,6 +24,8 @@ statement ::=
 	| define ident "," number nl
 	| call ident nl
 	| ret nl
+    | draw nl
+
 
 src ::= acc
     | nil

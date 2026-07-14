@@ -49,10 +49,10 @@ class Lexer:
             token = Token(self.cur_char, TokenType.COLON, self.cur_line)
         elif self.cur_char == "*":
             token = Token(self.cur_char, TokenType.ASTERISK, self.cur_line)
-        elif self.cur_char == "(":
-            token = Token(self.cur_char, TokenType.OPEN_PAREN, self.cur_line)
-        elif self.cur_char == ")":
-            token = Token(self.cur_char, TokenType.CLOSE_PAREN, self.cur_line)
+        elif self.cur_char == "[":
+            token = Token(self.cur_char, TokenType.OPEN_BRACKET, self.cur_line)
+        elif self.cur_char == "]":
+            token = Token(self.cur_char, TokenType.CLOSE_BRACKET, self.cur_line)
         elif self.cur_char.isdigit() or self.cur_char == "-":
             start_pos = self.cur_pos
             while self.peek_char().isdigit():
@@ -74,7 +74,7 @@ class Lexer:
             else:
                 token = Token(token_text, TokenType.IDENT, self.cur_line)
         else:
-            log.error(f"Unkown token ({self.cur_char})")
+            log.error(f"Unkown token ({self.cur_char})", self.cur_line)
 
         self.next_char()
 
