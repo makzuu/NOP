@@ -10,7 +10,7 @@ class Instruction:
         self.line = line
 
 class Eval:
-    def __init__(self, state):
+    def __init__(self, state, tree):
         self.instructions = []
         self.tmp_instruction = None
         self.tmp_argument = None

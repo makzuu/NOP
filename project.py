@@ -8,14 +8,11 @@ def main():
     if len(sys.argv) < 2:
         sys.exit(f"usage: {sys.argv[0]} <program>")
     source = get_source(sys.argv[1])
-    lex = Lexer(source)
     state = State()
-    eval = Eval(state)
-    parser = Parser(lex, state, eval)
-    parser.program()
-    eval.run()
+    tree = Parser(Lexer(source), state).program()
+    Eval(state, tree)
 
-    #debug(state)
+    debug(state, tree)
 
 
 def get_source(filename):
@@ -27,7 +24,9 @@ def get_source(filename):
     return source
 
 
-def debug(state):
+def debug(state, tree):
+    Parser.print_tree(tree)
+
     print("<DEBUG")
     print(f"acc = {state.acc}, bak = {state.bak}, bp = {state.bp}, sp = {state.sp}")
     print(f"stack = {state.stack}")

@@ -7,10 +7,9 @@ class Node:
         self.token = token
 
 class Parser:
-    def __init__(self, lexer, state, eval):
+    def __init__(self, lexer, state):
         self.lexer = lexer
         self.state = state
-        self.eval = eval
 
         self.tree = Node()
         self.cur_node = self.tree
@@ -40,7 +39,9 @@ class Parser:
     @staticmethod
     def print_tree(node, depth=0):
         if node.token != None:
-            print("\t" * depth, str(node.token.text))
+            print("\t" * depth, f"({node.token.type} {node.token.text})")
+        else:
+            print("\t" * depth, "(Parent-Node)")
         for child in node.children:
             Parser.print_tree(child, depth+1)
 
@@ -50,7 +51,8 @@ class Parser:
         while self.cur_token.type != TokenType.EOF:
             self.statement()
 
-        Parser.print_tree(self.tree)
+        return self.tree
+
 
     def statement(self):
         self.cur_node = self.tree
@@ -123,8 +125,9 @@ class Parser:
             self.cur_node = node
             self.next_token()
             self.src()
-        # | ident ":"
+        # LABEL
         elif self.check_type(TokenType.IDENT):
+            self.state.add_label(self.cur_token.text, self.cur_token.line)
             self.add_node(Node(self.cur_token))
             self.next_token()
             self.match_type(TokenType.COLON)

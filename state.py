@@ -38,3 +38,8 @@ class State:
             self.stack[i] = value
         except IndexError:
             log.error(f"index ({i}) out of bounds", self.line)
+
+    def add_label(self, name, line):
+        if name in self.consts:
+            log.error(f"Label ({name}) already exists", self.line)
+        self.consts[name] = line
