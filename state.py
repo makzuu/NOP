@@ -40,6 +40,6 @@ class State:
             log.error(f"index ({i}) out of bounds", self.line)
 
     def add_label(self, name, line):
-        if name in self.consts:
+        if name in self.labels:
             log.error(f"Label ({name}) already exists", self.line)
-        self.consts[name] = line
+        self.labels[name] = line
