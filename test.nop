@@ -1,0 +1,8 @@
+# mov bp[acc], acc
+# write acc
+
+
+# mov 69, acc
+# mov bp[bp[bp[1]]], acc
+
+mov 328, bp[bp[bp[1]]]

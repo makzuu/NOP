@@ -11,12 +11,54 @@ class Instruction:
 
 class Eval:
     def __init__(self, state, tree):
-        self.instructions = []
-        self.tmp_instruction = None
-        self.tmp_argument = None
+        # self.instructions = []
+        # self.tmp_instruction = None
+        # self.tmp_argument = None
+
+        # self.img = None
 
         self.state = state
-        self.img = None
+        self.tree = tree
+        self.eval()
+
+    def get_src(self, src):
+        if src.children[0].token.type == TokenType.ACC:
+            return self.status.acc
+        elif src.children[0].token.type == TokenType.NIL:
+            return 0
+        elif src.children[0].token.type == TokenType.IDENT:
+            return self.state.get_constant(src.children[0].token.text)
+        elif src.children[0].token.type == TokenType.NUMBER:
+            return int(src.children[0].token.text)
+        elif src.children[0].token.type == TokenType.BP:
+            if len(src.children) == 2:
+                return self.state.index(self.state.bp + self.get_src(src.children[1]))
+            return self.state.bp
+        elif src.children[0].token.type == TokenType.SP:
+            if len(src.children) == 2:
+                return self.state.index(self.state.sp + self.get_src(src.children[1]))
+            return self.state.sp
+
+    def eval(self):
+        for node in self.tree.children:
+            if node.token.type == TokenType.MOV:
+                src = node.children[0]
+                dst = node.children[1]
+
+                if dst.children[0].token.type == TokenType.ACC:
+                    self.state.acc = self.get_src(src)
+                elif dst.children[0].token.type == TokenType.NIL:
+                    ...
+                elif dst.children[0].token.type == TokenType.BP:
+                    if len(dst.children) == 2:
+                        self.state.insert(self.state.bp + self.get_src(dst.children[1]), self.get_src(src))
+                        continue
+                    self.state.bp = self.get_src(src)
+                elif dst.children[0].token.type == TokenType.SP:
+                    if len(dst.children) == 2:
+                        self.state.insert(self.state.bp + self.get_src(dst.children[1]), self.get_src(src))
+                        continue
+                    self.state.sp = self.get_src(src)
 
     def add_label(self, name, line):
         if name in self.state.labels:
